@@ -34,6 +34,13 @@ void testApp::draw(){
 	ofSetColor(255);
 	organizer.draw();
 	editor.draw();
+	/*
+	ofPushStyle();
+	ofSetLineWidth(3);
+	ofSetColor(255, 0, 0);
+	ofLine(0, organizer.viewport.y, organizer.viewport.width, organizer.viewport.y);	
+	ofPopStyle();
+	 //*/
 }
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){}

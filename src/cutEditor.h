@@ -9,8 +9,9 @@
 #pragma once
 #include "ofMain.h"
 #include "movieCut.h"
+#include "baseViewport.h"
 
-class cutEditor {
+class cutEditor : public baseViewport {
 
 public:
 ofVideoPlayer fullVid;
@@ -31,6 +32,7 @@ ofVideoPlayer fullVid;
 		//ofRemoveListener(ofEvents().draw, this, &cutEditor::draw);
 	}
 //--------------------------------------------------------------
+	//*
 	void enableMouseKeys(){
 		ofRegisterMouseEvents(this);
 		ofRegisterKeyEvents(this);
@@ -39,7 +41,8 @@ ofVideoPlayer fullVid;
 	void disableMouseKeys(){
 		ofUnregisterMouseEvents(this);
 		ofUnregisterKeyEvents(this);
-	}		
+	}
+	//*/
 //--------------------------------------------------------------
 	void setPlayheadPos(float x =0, bool updateY = false){
 		if (x>0 && x<1) {
@@ -70,6 +73,7 @@ ofVideoPlayer fullVid;
 			}
 			cout << "  " << currentCut->videoPath; 
 			bMovieLoaded = fullVid.loadMovie(currentCut->videoPath);
+			fullVid.setPosition(currentCut->inPos);
 			fullVid.update();
 			//fullVid.setAnchorPoint(0.5, 1);
 		}
@@ -77,7 +81,7 @@ ofVideoPlayer fullVid;
 	}
 //--------------------------------------------------------------
 	void setViewport(float x = 0, float y =  0, float w = ofGetWidth(), float h = 2*ofGetHeight()/3){
-		viewport.set(x, y, w, h);
+		baseViewport::setViewport(x, y, w, h);
 		playhead.set(viewport.x, viewport.height-10 + viewport.y, 4, 10);
 	}
 //--------------------------------------------------------------
@@ -109,6 +113,7 @@ ofVideoPlayer fullVid;
 		ofRect(playhead);
 		ofPopStyle();
 		}
+		drawBorders();
 	}
 //--------------------------------------------------------------	
 	void setVideoPos(float mousex){
@@ -136,7 +141,9 @@ ofVideoPlayer fullVid;
 	}
 //--------------------------------------------------------------	
 	void mouseDragged(ofMouseEventArgs & mouse){
-		setVideoPos(mouse.x);
+		if(viewport.inside(mouse.x, mouse.y)){	
+			setVideoPos(mouse.x);
+		}
 	}
 //--------------------------------------------------------------		
 	void mousePressed(ofMouseEventArgs & mouse){
@@ -184,8 +191,6 @@ ofVideoPlayer fullVid;
 //--------------------------------------------------------------		
 private:
 	movieCut* currentCut;
-
-	ofRectangle viewport;
 	ofRectangle playhead;
 	
 };

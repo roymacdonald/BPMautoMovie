@@ -9,7 +9,7 @@
 #pragma once
 #include "ofMain.h"
 
-#define SCROLLWIDTH 30
+#define SCROLLWIDTH 20
 #define FRAME_WIDTH 5
 #define BACKGROUND_COLOR 150
 
@@ -20,8 +20,8 @@ public:
 	float xOffset, yOffset;
 	bool bHScrollEnabled, bVScrollEnabled;
 	baseViewport(){
-		bHScrollEnabled=true;
-		bVScrollEnabled=true;
+		bHScrollEnabled=false;
+		bVScrollEnabled=false;
 	}
 	//--------------------------------------------------------------	
 	virtual void windowResized(ofResizeEventArgs &args){
@@ -31,10 +31,12 @@ public:
 	}
 	//--------------------------------------------------------------
 	virtual void setViewport(float x = 0, float y =  2*ofGetHeight()/3, float w = ofGetWidth(), float h = ofGetHeight()/3){
-		vScroll.set(w-SCROLLWIDTH+x, y, SCROLLWIDTH, h);
-		hScroll.set(x, h-SCROLLWIDTH+y, w, SCROLLWIDTH);
 		frame.set(x, y, w, h);
 		viewport.set(x+FRAME_WIDTH, y+FRAME_WIDTH, w-SCROLLWIDTH-(FRAME_WIDTH *2), h-SCROLLWIDTH-(FRAME_WIDTH *2));
+		vScroll.set(viewport.width+ viewport.x, viewport.y, SCROLLWIDTH, viewport.height);
+		hScroll.set(viewport.x, viewport.height + viewport.y, viewport.width, SCROLLWIDTH);
+		
+		cout << "setviewport " << x << ", " << y << ", " << w << ", " << h << endl;
 	}
 	//--------------------------------------------------------------
 	void drawBorders(){
@@ -53,6 +55,25 @@ public:
 		ofLine(viewport.x, viewport.y + viewport.height, viewport.x + viewport.width, viewport.y + viewport.height);
 		ofLine(viewport.x + viewport.width, viewport.y, viewport.x + viewport.width, viewport.y + viewport.height);
 		ofPopStyle();
+		
+		ofPushStyle();
+		
+		if (bVScrollEnabled) {
+			ofSetColor(10);
+			ofRect(vScroll);	
+			ofSetColor(200);
+			ofRect(vScroll.x, vScroll.y + yOffset*vScroll.height -4 , SCROLLWIDTH, 4);
+		}
+		if (bHScrollEnabled) {
+			ofSetColor(10);
+			ofRect(hScroll);
+			ofSetColor(200);
+			ofRect(hScroll.x + xOffset*hScroll.width -4, hScroll.y, 4, SCROLLWIDTH);
+
+		}
+		
+		ofPopStyle();
+		
 	}
 	//--------------------------------------------------------------
 	void doScroll(ofMouseEventArgs & mouse){
@@ -67,6 +88,7 @@ public:
 			}
 		}
 	}
+/*
 	//--------------------------------------------------------------
 	void enableMouseKeys(){
 		ofRegisterMouseEvents(this);
@@ -100,4 +122,5 @@ public:
 	void keyReleased(ofKeyEventArgs & key){
 		
 	}
+	//*/
 };

@@ -10,22 +10,21 @@
 #include "ofMain.h"
 #include "ofxXmlSettings.h"
 #include "movieCut.h"
+#include "baseViewport.h"
+ 
 
-#define SCROLLWIDTH 30
 #define THUMB_MARGIN 10
 
-class movieCutOrganizer {
+class movieCutOrganizer : public baseViewport{
 public:
 	
-	
+	float organizerHeight;
 	vector <movieCut> thumbs;
 	vector <string> videos;
 	
 	int selected;
 	int placedIndex;
 	movieCut* videoPointer;
-	ofRectangle viewport;
-	ofRectangle vScroll;
 	bool bUpdatedMovieRef;
 	bool bDragging;
 	bool bVideoClicked;
@@ -38,6 +37,7 @@ public:
 	bUpdatedMovieRef = false;
 	bDragging = false;
 	bVideoClicked = false;
+		organizerHeight =0;
 		ofAddListener(ofEvents().windowResized, this, &movieCutOrganizer::windowResized);	
 	}
 //--------------------------------------------------------------	
@@ -47,9 +47,7 @@ public:
 	}
 //--------------------------------------------------------------
 	void setViewport(float x = 0, float y =  2*ofGetHeight()/3, float w = ofGetWidth(), float h = ofGetHeight()/3){
-		vScroll.set(w-SCROLLWIDTH+x, y, SCROLLWIDTH, h);
-		viewport.set(x, y, w-SCROLLWIDTH, h);
-		
+		baseViewport::setViewport(x,y,w,h);
 	}
 
 //--------------------------------------------------------------
@@ -66,8 +64,13 @@ public:
 //--------------------------------------------------------------
 	void draw(){
 		ofPushView();
+	//	ofPushMatrix();
 		ofViewport(viewport);
 		ofSetupScreen();
+		if (organizerHeight >viewport.height) {
+			ofTranslate(0, -yOffset * (organizerHeight - viewport.height), 0);
+		}
+//*
 		for(int i = 0; i < thumbs.size(); i++){
 			if (i == selected) {
 				ofPushStyle();
@@ -77,12 +80,25 @@ public:
 			}
 			thumbs[i].draw();
 		}
+ //*/
 		if( bDragging && thumbs.size() > 0){
 			ofSetColor(255, 190, 50);
 			ofRect(thumbs[placedIndex].r.x - 5, thumbs[placedIndex].r.y, 4, 80);
 		}
-		ofSetColor(255);
+		
+		
+		//ofPopMatrix();
+/*
+		ofSetColor(255, 100, 0);
+		ofSetLineWidth(3);
+		ofNoFill();
+		for (int i =0; i<thumbs.size(); i++) {
+			ofRect(thumbs[i].r);
+		}//*/
 		ofPopView();
+		
+		ofSetColor(255);
+		drawBorders();
 	}
 //--------------------------------------------------------------
 void loadMoviesFromDir(string dir = "movies/"){
@@ -115,7 +131,8 @@ void nextVideo(){
 void reSort(){
 	float x = viewport.x + THUMB_MARGIN;
 	float y = viewport.y + THUMB_MARGIN;
-	
+	cout << "resort y " << y<< endl;
+	organizerHeight = 100;
 	for(int i = 0; i < thumbs.size(); i++){
 		thumbs[i].r.x = x;
 		thumbs[i].r.y = y;
@@ -125,9 +142,12 @@ void reSort(){
 		if( x + thumbs[i].r.width >= viewport.width + viewport.x - THUMB_MARGIN){
 			x = viewport.x + THUMB_MARGIN;
 			y += 100;
+			organizerHeight +=100;
 		}
-		
 	}
+	 
+	bVScrollEnabled=(organizerHeight>viewport.height);
+	
 }
 //--------------------------------------------------------------
 void randomizeThumbs(){
@@ -214,15 +234,19 @@ void reorganizeThumbs(){
 //--------------------------------------------------------------
 	void mousePressed(ofMouseEventArgs & mouse){
 		if( viewport.inside(mouse.x, mouse.y)){
+			cout << "mouseClick: " << mouse.x << ", " << mouse.y << endl;
 			for(int i = 0; i < thumbs.size(); i++){
 				if(thumbs[i].r.inside(mouse.x, mouse.y)){
 					selected = i;
 					bVideoClicked =true;
 					setMovieRef();
+					cout << "clickedRect: " << thumbs[i].r.x << ", " << thumbs[i].r.y << ", " << thumbs[i].r.width << ", " << thumbs[i].r.height << endl;
+					
 					break;
 				}
 			}
 		}
+		doScroll(mouse);
 	}
 //--------------------------------------------------------------
 	void mouseDragged(ofMouseEventArgs & mouse){
@@ -240,7 +264,7 @@ void reorganizeThumbs(){
 		}else {
 			bDragging=false;
 		}
-
+		doScroll(mouse);
 	}
 //--------------------------------------------------------------
 	void mouseReleased(ofMouseEventArgs & mouse){
@@ -249,7 +273,7 @@ void reorganizeThumbs(){
 		}
 		bDragging = false;
 		bVideoClicked = false;
-
+		doScroll(mouse);
 	}
 //--------------------------------------------------------------		
 	void keyPressed(ofKeyEventArgs & key){

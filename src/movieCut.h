@@ -62,6 +62,7 @@ public:
 		img.resize(120, 120.0f * (img.getHeight() / img.getWidth()) );
 		img.saveImage("thumbs/"+thumbPath + ".jpg");
 		r.set(thmbX, thmbY,img.getWidth(), img.getHeight());
+		img.setAnchorPoint(0, 0);
 	}
 //--------------------------------------------------------------
 	string videoPath;
