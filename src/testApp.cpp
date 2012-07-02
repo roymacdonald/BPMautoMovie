@@ -1,5 +1,6 @@
 #include "testApp.h"
 #include "ofxXmlSettings.h"
+#include "bpmManager.h"
 
 float NUM_SECS = 1.6;
 int NUM_FRAMES = 24.0*NUM_SECS;
@@ -19,6 +20,8 @@ void testApp::setup(){
 	editor.setCutReference(organizer.getMovieRef());
 	editor.enableMouseKeys();
 	organizer.enableMouseKeys();
+	ofSetFrameRate(60);
+	editor.setBpmManager(&myBpmManager);
 }
 //--------------------------------------------------------------
 void testApp::update(){
@@ -34,6 +37,7 @@ void testApp::draw(){
 	ofSetColor(255);
 	organizer.draw();
 	editor.draw();
+	myBpmManager.draw();
 	/*
 	ofPushStyle();
 	ofSetLineWidth(3);

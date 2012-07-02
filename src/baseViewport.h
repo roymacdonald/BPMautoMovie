@@ -10,33 +10,34 @@
 #include "ofMain.h"
 
 #define SCROLLWIDTH 20
-#define FRAME_WIDTH 5
+#define FRAME_WIDTH 4
 #define BACKGROUND_COLOR 150
-
+#define BG_SHADOW_OFFSET 60
 class baseViewport{
 public:
-	ofRectangle viewport, frame;
+	ofRectangle myViewport, frame;
 	ofRectangle vScroll, hScroll;
 	float xOffset, yOffset;
 	bool bHScrollEnabled, bVScrollEnabled;
 	baseViewport(){
 		bHScrollEnabled=false;
 		bVScrollEnabled=false;
+		xOffset = 0;
+		yOffset = 0;
 	}
 	//--------------------------------------------------------------	
 	virtual void windowResized(ofResizeEventArgs &args){
 		setViewport();	
-		xOffset = 0;
-		yOffset = 0;
+		
 	}
 	//--------------------------------------------------------------
 	virtual void setViewport(float x = 0, float y =  2*ofGetHeight()/3, float w = ofGetWidth(), float h = ofGetHeight()/3){
 		frame.set(x, y, w, h);
-		viewport.set(x+FRAME_WIDTH, y+FRAME_WIDTH, w-SCROLLWIDTH-(FRAME_WIDTH *2), h-SCROLLWIDTH-(FRAME_WIDTH *2));
-		vScroll.set(viewport.width+ viewport.x, viewport.y, SCROLLWIDTH, viewport.height);
-		hScroll.set(viewport.x, viewport.height + viewport.y, viewport.width, SCROLLWIDTH);
+		myViewport.set(x+FRAME_WIDTH, y+FRAME_WIDTH, w-(FRAME_WIDTH *2), h-(FRAME_WIDTH *2));
+		vScroll.set(myViewport.width+ myViewport.x-SCROLLWIDTH, myViewport.y, SCROLLWIDTH, myViewport.height-1);
+		hScroll.set(myViewport.x, myViewport.height + myViewport.y -SCROLLWIDTH, myViewport.width-1	, SCROLLWIDTH);
 		
-		cout << "setviewport " << x << ", " << y << ", " << w << ", " << h << endl;
+		cout << "setmyViewport " << x << ", " << y << ", " << w << ", " << h << endl;
 	}
 	//--------------------------------------------------------------
 	void drawBorders(){
@@ -47,29 +48,39 @@ public:
 		ofRect(frame.x + frame.width, frame.y, -FRAME_WIDTH, frame.height);
 		ofRect(frame.x, frame.y + frame.height, frame.width, -FRAME_WIDTH);
 		ofRect(frame.x, frame.y, FRAME_WIDTH, frame.height);
-		ofSetColor(BACKGROUND_COLOR-20);
+		ofSetColor(BACKGROUND_COLOR-BG_SHADOW_OFFSET);
 		ofNoFill();
-		ofLine(viewport.x, viewport.y, viewport.x + viewport.width, viewport.y);
-		ofLine(viewport.x, viewport.y, viewport.x, viewport.y+viewport.height);
-		ofSetColor(BACKGROUND_COLOR+20);
-		ofLine(viewport.x, viewport.y + viewport.height, viewport.x + viewport.width, viewport.y + viewport.height);
-		ofLine(viewport.x + viewport.width, viewport.y, viewport.x + viewport.width, viewport.y + viewport.height);
+		ofLine(myViewport.x, myViewport.y, myViewport.x + myViewport.width, myViewport.y);
+		ofLine(myViewport.x, myViewport.y, myViewport.x, myViewport.y+myViewport.height);
+		ofSetColor(BACKGROUND_COLOR+BG_SHADOW_OFFSET);
+		ofLine(myViewport.x, myViewport.y + myViewport.height, myViewport.x + myViewport.width, myViewport.y + myViewport.height);
+		ofLine(myViewport.x + myViewport.width, myViewport.y, myViewport.x + myViewport.width, myViewport.y + myViewport.height);
 		ofPopStyle();
 		
 		ofPushStyle();
 		
 		if (bVScrollEnabled) {
-			ofSetColor(10);
-			ofRect(vScroll);	
-			ofSetColor(200);
-			ofRect(vScroll.x, vScroll.y + yOffset*vScroll.height -4 , SCROLLWIDTH, 4);
+			ofSetColor(50);
+			ofRect(vScroll);
+			ofRectangle bar(vScroll.x, vScroll.y + yOffset*(vScroll.height -8) , SCROLLWIDTH, 4);
+			if(bar.inside(ofGetMouseX(), ofGetMouseY())){
+				ofSetColor(255, 240, 0);
+			}else {
+				ofSetColor(200);	
+			}
+			ofRect(bar);
 		}
 		if (bHScrollEnabled) {
-			ofSetColor(10);
+			ofSetColor(50);
 			ofRect(hScroll);
 			ofSetColor(200);
-			ofRect(hScroll.x + xOffset*hScroll.width -4, hScroll.y, 4, SCROLLWIDTH);
-
+			ofRectangle bar(hScroll.x + xOffset*(hScroll.width -8), hScroll.y, 4, SCROLLWIDTH);
+			if(bar.inside(ofGetMouseX(), ofGetMouseY())){
+				ofSetColor(255, 240, 0);
+			}else {
+				ofSetColor(200);	
+			}
+			ofRect(bar);
 		}
 		
 		ofPopStyle();

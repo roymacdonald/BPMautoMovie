@@ -61,6 +61,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B02F73AC15A10249007C6F2C /* bpmManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bpmManager.h; sourceTree = "<group>"; };
 		B07F0F2E159971C80005E4BB /* movieCut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = movieCut.h; sourceTree = "<group>"; };
 		B07F0F2F159972190005E4BB /* movieCutOrganizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = movieCutOrganizer.h; sourceTree = "<group>"; };
 		B0B748C5159CFC4A006FEC3E /* cutEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cutEditor.h; sourceTree = "<group>"; };
@@ -226,6 +227,7 @@
 				B07F0F2F159972190005E4BB /* movieCutOrganizer.h */,
 				B0B748C5159CFC4A006FEC3E /* cutEditor.h */,
 				B0B74A56159D69F8006FEC3E /* baseViewport.h */,
+				B02F73AC15A10249007C6F2C /* bpmManager.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

@@ -27,6 +27,6 @@ class testApp : public ofBaseApp{
 	
 	movieCutOrganizer organizer;
 	cutEditor editor;
-	
+	bpmManager myBpmManager;
 };
 

@@ -31,12 +31,12 @@ public:
 //--------------------------------------------------------------
 
 	movieCutOrganizer() {
-	selected = 0;
-	placedIndex = 0;
-	setViewport();
-	bUpdatedMovieRef = false;
-	bDragging = false;
-	bVideoClicked = false;
+		selected = 0;
+		placedIndex = 0;
+		setViewport();
+		bUpdatedMovieRef = false;
+		bDragging = false;
+		bVideoClicked = false;
 		organizerHeight =0;
 		ofAddListener(ofEvents().windowResized, this, &movieCutOrganizer::windowResized);	
 	}
@@ -65,10 +65,11 @@ public:
 	void draw(){
 		ofPushView();
 	//	ofPushMatrix();
-		ofViewport(viewport);
+	//	ofViewport(myViewport);
+		ofViewport(frame);
 		ofSetupScreen();
-		if (organizerHeight >viewport.height) {
-			ofTranslate(0, -yOffset * (organizerHeight - viewport.height), 0);
+		if (organizerHeight >myViewport.height) {
+			ofTranslate(0, -yOffset * (organizerHeight - myViewport.height), 0);
 		}
 //*
 		for(int i = 0; i < thumbs.size(); i++){
@@ -129,8 +130,8 @@ void nextVideo(){
 	}
 //--------------------------------------------------------------
 void reSort(){
-	float x = viewport.x + THUMB_MARGIN;
-	float y = viewport.y + THUMB_MARGIN;
+	float x = myViewport.x + THUMB_MARGIN;
+	float y = myViewport.y + THUMB_MARGIN;
 	cout << "resort y " << y<< endl;
 	organizerHeight = 100;
 	for(int i = 0; i < thumbs.size(); i++){
@@ -139,14 +140,14 @@ void reSort(){
 		
 		x += thumbs[i].r.width + THUMB_MARGIN;
 		
-		if( x + thumbs[i].r.width >= viewport.width + viewport.x - THUMB_MARGIN){
-			x = viewport.x + THUMB_MARGIN;
+		if( x + thumbs[i].r.width >= myViewport.width + myViewport.x - THUMB_MARGIN){
+			x = myViewport.x + THUMB_MARGIN;
 			y += 100;
 			organizerHeight +=100;
 		}
 	}
 	 
-	bVScrollEnabled=(organizerHeight>viewport.height);
+	bVScrollEnabled=(organizerHeight>myViewport.height);
 	
 }
 //--------------------------------------------------------------
@@ -233,10 +234,10 @@ void reorganizeThumbs(){
 	}
 //--------------------------------------------------------------
 	void mousePressed(ofMouseEventArgs & mouse){
-		if( viewport.inside(mouse.x, mouse.y)){
+		if( myViewport.inside(mouse.x, mouse.y)){
 			cout << "mouseClick: " << mouse.x << ", " << mouse.y << endl;
 			for(int i = 0; i < thumbs.size(); i++){
-				if(thumbs[i].r.inside(mouse.x, mouse.y)){
+				if(thumbs[i].r.inside(mouse.x, mouse.y + yOffset*(organizerHeight - myViewport.height))){
 					selected = i;
 					bVideoClicked =true;
 					setMovieRef();
@@ -250,13 +251,13 @@ void reorganizeThumbs(){
 	}
 //--------------------------------------------------------------
 	void mouseDragged(ofMouseEventArgs & mouse){
-		if( viewport.inside(mouse.x, mouse.y)){
+		if( myViewport.inside(mouse.x, mouse.y)){
 			if (bVideoClicked) {
 				bDragging =true;
 				bVideoClicked =false;
 			}
 			for(int i = 0; i < thumbs.size(); i++){
-				if( thumbs[i].r.inside(mouse.x, mouse.y) ){
+				if( thumbs[i].r.inside(mouse.x, mouse.y + yOffset*(organizerHeight - myViewport.height)) ){
 					placedIndex = i;
 					cout << "placedIndex " << placedIndex <<endl;
 				}

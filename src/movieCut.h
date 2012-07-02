@@ -15,6 +15,7 @@ public:
 	movieCut(){
 		inPos = 0.0;
 		outPos = 1.0;
+		fps = 0;
 	}
 //--------------------------------------------------------------
 	void setup(string videoPath, bool makeThmb = true, float x =0 , float y = 0){
@@ -58,6 +59,8 @@ public:
 		tmp.loadMovie(videoPath);
 		tmp.play();
 		tmp.setPosition(p);
+		fps = tmp.getTotalNumFrames()/tmp.getDuration();
+		cout << "FPS: " << fps << endl;
 		img.setFromPixels( tmp.getPixelsRef() );
 		img.resize(120, 120.0f * (img.getHeight() / img.getWidth()) );
 		img.saveImage("thumbs/"+thumbPath + ".jpg");
@@ -71,4 +74,5 @@ public:
 	
 	ofRectangle r;
 	ofImage img;
+	float fps;
 };
